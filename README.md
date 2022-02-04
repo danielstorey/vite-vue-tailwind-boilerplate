@@ -1,6 +1,6 @@
-#vite-vue-tailwind-boilerplate
+# vite-vue-tailwind-boilerplate
 
-A quick starter project using Vue, Vite, Tailwind and scss 
+A quick starter project using Vue, Vite and Tailwind with scss 
 
 The commands are the usual vite commands:
 
@@ -10,7 +10,7 @@ npm run dev
 yarn dev
 ```
 
-Build for productions
+Build for production
 ```
 npm run build
 yarn build
