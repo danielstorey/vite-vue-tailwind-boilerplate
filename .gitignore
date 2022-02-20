@@ -1,8 +1,16 @@
+# IDE
 .idea
 .vscode
-node_modules
+
+#OS
 .DS_Store
-dist
-dist-ssr
+
+#env
 *.local
 .env
+
+# modules
+node_modules
+
+# build
+dist
