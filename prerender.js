@@ -7,6 +7,7 @@ const manifest = require('./dist/static/ssr-manifest.json')
 const template = fs.readFileSync(toAbsolute('dist/static/index.html'), 'utf-8')
 const { render } = require('./dist/server/entry-server.js')
 
+// TODO: Enable automatic generation of routes as an option
 // determine routes to pre-render from src/pages
 const routesToPrerender = fs
   .readdirSync(toAbsolute('src/pages'))
@@ -15,21 +16,25 @@ const routesToPrerender = fs
     return name === 'home' ? `/` : `/${name}`
   })
 
+function compileTemplate(content, data) {
+  return Object.entries(data).reduce((output, [key, value]) => {
+    return output.replace(`<!--${key}-->`, value)
+  }, content)
+}
+
 ;(async () => {
   // pre-render each route...
   for (const url of routesToPrerender) {
-    const [appHtml, preloadLinks] = await render(url, manifest)
+    const templateData = await render(url, manifest)
 
-    const html = template
-      .replace(`<!--preload-links-->`, preloadLinks)
-      .replace(`<!--app-html-->`, appHtml)
+    const compiled = compileTemplate(template, templateData)
 
     const dir = url === '/' ? '' : url
     const filePath = `dist/static${dir}/index.html`
-    fs.outputFileSync(toAbsolute(filePath), html)
+    fs.outputFileSync(toAbsolute(filePath), compiled)
     console.log('pre-rendered:', filePath)
   }
 
   // done, delete ssr manifest
-  fs.unlinkSync(toAbsolute('dist/static/ssr-manifest.json'))
+  // fs.unlinkSync(toAbsolute('dist/static/ssr-manifest.json'))
 })()

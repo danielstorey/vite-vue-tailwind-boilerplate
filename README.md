@@ -1,6 +1,6 @@
 # vite-vue-tailwind-boilerplate
 
-A quick starter project using Vue, Vite and Tailwind with scss 
+A quick SPA/SSR/SSG starter project using Vue, Vite and Tailwind with vue-router, pinia and scss 
 
 The commands are the usual vite commands:
 

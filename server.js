@@ -66,11 +66,14 @@ async function createServer(
         render = require('./dist/server/entry-server.js').render
       }
 
-      const [appHtml, preloadLinks] = await render(url, manifest)
+      const templateData = await render(url, manifest)
 
-      const html = template
-        .replace(`<!--preload-links-->`, preloadLinks)
-        .replace(`<!--app-html-->`, appHtml)
+      const html = Object.entries(templateData).reduce(
+        (output, [key, value]) => {
+          return output.replace(`<!--${key}-->`, value)
+        },
+        template
+      )
 
       res.status(200).set({ 'Content-Type': 'text/html' }).end(html)
     } catch (e) {
@@ -84,11 +87,19 @@ async function createServer(
 }
 
 if (!isTest) {
-  createServer().then(({ app }) =>
-    app.listen(3000, () => {
-      console.log('http://localhost:3000')
+  createServer().then(({ app }) => {
+    let port = 3000
+    const listen = (port) =>
+      app.listen(port, () => {
+        console.log('http://localhost:' + port)
+      })
+
+    listen(port).on('error', (e) => {
+      if (e.code === 'EADDRINUSE') {
+        listen(++port)
+      }
     })
-  )
+  })
 }
 
 // for test use
